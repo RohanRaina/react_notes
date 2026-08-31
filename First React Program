@@ -70,7 +70,28 @@ If we want to use JSX. Browsers dont understand JSX directly neither does webpac
 Babel is a JavaScript compiler/transpiler that transforms modern JavaScript and JSX 
 into JavaScript that can be understood by the target environment.
 
-1
+10. Configure Babel
+Create babel.config.json and add
+{
+  "presets": ["@babel/preset-react"] //tells babel to use react preset
+}
+11. Configure webpack to use babel
+In webpack.config.js add
+ module: {
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: "babel-loader"
+            }
+        ]
+    }
+
+
+***We can avoid all this manual configuration and use build tools like Vite to do all this for us
+
+npm create vite@latest my-app -- --template react
+
 
 
 
