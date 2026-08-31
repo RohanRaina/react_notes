@@ -1,1 +1,169 @@
+What is React?
 
+React is a JavaScript library for building interactive user interfaces. It follows a component-based architecture, allowing us to create reusable UI components. 
+React uses state and props to manage data and re-renders components when their relevant data changes, keeping the UI synchronized with the application state.
+
+Why React?
+
+Let's first see how we create a page using plain HTML.
+
+<!DOCTYPE html>
+<html lang="en">
+    <title>Learning React</title>
+
+    <body>
+        <h1>Hi, My name is Rohan</h1>
+    </body>
+</html>
+
+Here the UI is static.
+
+name = Rohan
+
+       ↓
+
+Hi, My name is Rohan
+
+Now suppose the name comes from some JavaScript logic and changes every 5 seconds.
+
+<!DOCTYPE html>
+<html lang="en">
+    <title>Learning React</title>
+
+    <body>
+        <div id="root"></div>
+
+        <script>
+            let name = "Rohan";
+
+            setInterval(() => {
+                name = name === "Rohan" ? "Mike" : "Rohan";
+                console.log(name);
+            }, 5000);
+
+            const header = document.createElement("h1");
+
+            header.innerHTML = "Hi, My name is " + name;
+
+            const root = document.getElementById("root");
+
+            root.appendChild(header);
+        </script>
+    </body>
+</html>
+
+Here, the value of name changes:
+
+Rohan
+  ↓ 5 seconds
+Mike
+  ↓ 5 seconds
+Rohan
+  ↓ 5 seconds
+Mike
+
+But the UI remains:
+
+Hi, My name is Rohan
+
+Why?
+Because changing a JavaScript variable does not automatically update the DOM.
+
+We initially did:
+
+header.innerHTML = "Hi, My name is " + name;
+
+At that point:
+
+name = Rohan
+
+So the browser displays:
+
+Hi, My name is Rohan
+
+Later, when:
+
+name = "Mike";
+
+the variable changes, but the browser doesn't know that it needs to change the <h1>.
+
+Updating the UI manually
+With plain JavaScript, we have to explicitly update the DOM whenever the value changes.
+
+<script>
+    let name = "Rohan";
+
+    const header = document.createElement("h1");
+    const root = document.getElementById("root");
+
+    setInterval(() => {
+        name = name === "Rohan" ? "Mike" : "Rohan";
+
+        header.innerHTML = "Hi, My name is " + name;
+
+        root.appendChild(header);
+    }, 5000);
+</script>
+
+Now:
+
+name changes
+     ↓
+manually update DOM
+     ↓
+UI changes
+
+So we have to write the code responsible for keeping the UI synchronized with our data.
+
+The problem
+Imagine a large application with:
+
+hundreds of UI elements
+many changing values
+user interactions
+API responses
+forms
+conditional UI
+nested components
+Manually finding and updating every affected DOM element becomes difficult to maintain.
+
+We would have to continuously think:
+
+"Which value changed?"
+        ↓
+"Which DOM element depends on it?"
+        ↓
+"How should I update that element?"
+        ↓
+"Are there other elements that depend on the same value?"
+
+This is where React helps.
+
+What React gives us
+React allows us to describe the UI based on the application's state.
+
+Conceptually:
+
+State
+  ↓
+UI
+
+When state changes:
+
+State changes
+     ↓
+React detects the change
+     ↓
+React determines what UI needs to change
+     ↓
+React updates the DOM
+
+So instead of manually doing:
+
+header.innerHTML = ...
+
+every time our data changes, we tell React:
+
+"This UI should look like this based on the current state."
+
+React takes care of updating the UI.
