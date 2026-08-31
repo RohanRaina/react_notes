@@ -1,0 +1,207 @@
+//Adding React through CDN
+<!DOCTYPE html>
+<html   lang="en">
+    <title>
+        Leraning React
+    </title>
+    <body>        
+        <div id="root"></div>
+        <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+        <script>      
+            const rootEle =  document.getElementById("root");
+            const element = React.createElement(
+                "h1",
+                {
+                  className:"header-element",
+                  id:"child"
+                },
+                "Hi,My name is Rohan"
+            )
+            const root = ReactDOM.createRoot(rootEle);
+            root.render(element);
+        </script>
+    </body>
+</html>
+
+//Addinng react through npm
+1. mkdir react-app
+2. Inside react-app,run npm init -y.This add the package.json to the project
+3. Run npm install react react-dom. This will add react and react-dom as dependencies to the project and also add the files to node_modules
+4  npm install --save-dev webpack webpack-cli
+5. Webpack need to know where to start from i.e. entry point for this create a file webpack.config.js in the root dir
+6 Inside webpack-config.js add 
+const path = require("path");
+
+module.exports = {
+    entry: "./src/main.js",
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "main.js"
+    }
+};
+//This tells webpack to start from main.js and put the bundled code inside dist folder
+7 npx webpack
+This add the bundled file under dist folder
+Notes: Webpack is a JavaScript module bundler that analyzes the dependencies of an application, processes the modules, 
+and bundles them into files that can be loaded by the browser.
+8 Now we need to connect index.html to the bundled js file for this add
+<script src="./dist/main.js"></script> in the index.html
+index.html (Open in browser)
+    ↓
+<script src="./dist/main.js">
+    ↓
+Webpack bundle
+    ↓
+React + ReactDOM + our code
+    ↓
+document.getElementById("root")
+    ↓
+root.render(...)
+    ↓
+UI
+//This will work but everytime we change the code, we need to run npx webpack and manually re-load the browser. To solve this we need 
+we need build tools that provide development servers and watch mode.
+
+9. npm install --save-dev @babel/core
+npm install --save-dev @babel/preset-react // tells babel to compile react
+npm install --save-dev babel-loader //used by webpack to provide code to babel
+If we want to use JSX. Browsers dont understand JSX directly neither does webpack. For this we need a complier (commonly used Babel)
+Babel is a JavaScript compiler/transpiler that transforms modern JavaScript and JSX 
+into JavaScript that can be understood by the target environment.
+
+1
+
+
+
+------------------------------------------------
+<!DOCTYPE html>
+<html   lang="en">
+    <title>
+        Leraning React
+    </title>
+    <body>        
+        <div id="root"></div>
+        <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+        <script>
+            let name    = "Rohan";        
+            const rootEle =  document.getElementById("root");
+            setInterval(() => {
+                name = name === "Rohan" ? "Mike" : "Rohan";
+            }, 5000);
+            const element = React.createElement(
+                "h1",
+                null,
+                "Hi,My name is "+name
+            )
+            const root = ReactDOM.createRoot(rootEle);
+            root.render(element);
+        </script>
+    </body>
+</html>
+code is valid, and React will render:
+
+Hi, My name is Rohan
+
+But after 5 seconds, when name changes to "Mike", the UI will still say Rohan.
+
+Let's understand exactly why.
+
+What happens step by step
+Initially:
+
+let name = "Rohan";
+
+So:
+
+name
+ ↓
+"Rohan"
+
+Then you create the React element:
+
+const element = React.createElement(
+    "h1",
+    null,
+    "Hi, My name is " + name
+);
+
+At this exact moment, JavaScript evaluates:
+
+"Hi,My name is " + name
+
+which becomes:
+
+"Hi,My name is Rohan"
+
+So your React element is effectively describing:
+
+<h1>
+    Hi,My name is Rohan
+</h1>
+
+Then:
+
+const root = ReactDOM.createRoot(rootEle);
+root.render(element);
+
+React renders it:
+
+Hi, My name is Rohan
+
+Then the interval runs
+After 5 seconds:
+
+name = name === "Rohan" ? "Mike" : "Rohan";
+
+Now:
+
+name
+ ↓
+"Mike"
+
+But here's the important part:
+
+Nothing happened to element.
+
+Your existing element still represents:
+
+<h1>
+    Hi, My name is Rohan
+</h1>
+
+It doesn't magically become:
+
+<h1>
+    Hi, My name is Mike
+</h1>
+
+And you don't call:
+
+root.render(...)
+
+again either.
+
+So:
+
+JavaScript variable
+        ↓
+      changes
+        ↓
+      "Mike"
+
+        X
+
+React element
+        ↓
+ still says "Rohan"
+
+        ↓
+      DOM
+        ↓
+ still says "Rohan"
+
+Reason: This happens because React does not treat every JavaScript variable as state.We have to explicitly tell React:
+"This value is part of the component's state."
+Then, when that state changes, React can re-render the component and update the UI accordingly.
